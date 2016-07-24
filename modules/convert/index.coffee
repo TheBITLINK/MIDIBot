@@ -3,7 +3,7 @@ THIS IS WHERE THE REAL MAGIC HAPPENS ¯\_(ツ)_/¯
 ###
 Chance = require 'chance'
 VideoToWav = require './videoToWav'
-WavToMidi = require './wavToMidi'
+WavToMidi = require './wavToMIDI'
 
 class ConvertModule
   constructor: (@engine)->
