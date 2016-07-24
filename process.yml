@@ -1,11 +1,10 @@
 apps:
   - name   : midiBot
-    interpreter: coffee
+    interpreter: ./node_modules/.bin/coffee
     script : main.coffee
     env    :
       NODE_ENV: production
-      BOT_MODULES: '["admin", "ping", "eval", "convert"]'
-      
+      BOT_MODULES: '["admin", "ping", "eval", "convert"]'      
     env_staging:
       NODE_ENV: development
       PORT: 3052
