@@ -3,6 +3,7 @@ THIS IS WHERE THE REAL MAGIC HAPPENS ¯\_(ツ)_/¯
 ###
 Chance = require 'chance'
 VideoToWav = require './videoToWav'
+WavToMidi = require './wavToMidi'
 
 class ConvertModule
   constructor: (@engine)->
@@ -19,8 +20,26 @@ class ConvertModule
     wav = new VideoToWav @engine, msg, args, fname
     wav.beginConvert(@convertCallback1)
   
-  convertCallback1: (error, msg)=>
-    return @bot.reply(msg, 'There was an error while trying to convert to MIDI.') if error
+  convertCallback1: (error, msg, convert)=>
+    if error
+      convert.deleteFiles()
+      return @bot.reply(msg, 'There was an error while trying to convert to MIDI.')
+    midi = new WavToMidi @engine, msg, convert.wavPath, convert.filename, convert
+    midi.beginConvert @convertCallback2
+
+  convertCallback2: (error, msg, convert)=>
+    if error
+      convert.wavConvert.deleteFiles()
+      convert.deleteFiles()
+      return @bot.reply(msg, 'There was an error while trying to convert to MIDI.')
+    convert.wavConvert.deleteFiles()
+    @bot.sendFile msg.channel,
+                  convert.midiPath,
+                  convert.filename+".mid",
+                  msg.author.mention() + ", enjoy your high quality MIDI file!",
+                  (err, m)->
+                    @bot.reply msg "Couldnt send the MIDI file, check if the bot has permission to send files." if err
+                    convert.deleteFiles()
 
   shutdown: ()=>
     @commands.unregisterCommand 'convert'

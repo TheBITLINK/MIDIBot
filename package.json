@@ -32,6 +32,7 @@
     "coffee-script": "^1.10.0",
     "discord.js": "^8.0.0",
     "dotenv": "^2.0.0",
+    "ffmpeg": "0.0.4",
     "path": "^0.12.7",
     "request": "^2.74.0",
     "url": "^0.11.0",

@@ -80,3 +80,5 @@ bin
 # Environment variables
 .env
 watch.bat
+# Application Data
+data
