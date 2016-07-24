@@ -32,6 +32,18 @@
             "outDir": null,
             "localRoot": "${workspaceRoot}",
             "remoteRoot": null
-        }
+        },
+        {
+            "name": "Attach (remote)",
+            "type": "node",
+            "request": "attach",
+            "port": 5858,
+            "address": "thebit.link",
+            "restart": false,
+            "sourceMaps": true,
+            "outDir": "${workspaceRoot}/bin",
+            "localRoot": "${workspaceRoot}",
+            "remoteRoot": null
+        },
     ]
 }
