@@ -15,6 +15,7 @@ class ConvertModule
     @convertCommand = @commands.registerCommand 'convert', commandOptions, @convertFunc
     
   convertFunc: (msg,args)=>
+    return @bot.reply msg 'No video specified' if not args.trim()
     chance = new Chance
     fname = chance.string {length: 6, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'}
     wav = new VideoToWav @engine, msg, args, fname
