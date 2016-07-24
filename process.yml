@@ -4,7 +4,7 @@ apps:
     script : main.coffee
     env    :
       NODE_ENV: production
-      BOT_MODULES: '["admin", "ping", "eval", "convert"]'      
+      BOT_MODULES: '["admin", "ping", "eval", "convert", "statics"]'      
     env_staging:
       NODE_ENV: development
       PORT: 3052

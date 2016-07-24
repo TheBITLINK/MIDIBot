@@ -6,6 +6,7 @@ CommandManager = require './commands'
 ModuleManager = require './modules'
 PermissionManager = require './permissions'
 ServerManager = require './servers'
+git = require 'git-rev'
 
 class BotEngine
   constructor: (@settings) ->
@@ -23,6 +24,8 @@ class BotEngine
     @bot.on 'serverRoleUpdated', @onServerRoleUpdated
     @bot.on 'message', @onMessage
     @bot.on 'disconnected', @establishConnection
+    @bootDate = new Date()
+    git.short @devVersion
     
   onReady: =>
     @bot.setPlayingGame @prefix+'help'
@@ -45,6 +48,9 @@ class BotEngine
         return if not @serverData.servers[msg.server.id].enabled and not @permissions.isAdmin(msg.author, msg.server)
     if msg.content[..@prefix.length-1] is @prefix
       @commands.executeCommand msg
+
+  devVersion: (version)=>
+    @version = version
 
   establishConnection: =>
     @bot.loginWithToken @settings.token
