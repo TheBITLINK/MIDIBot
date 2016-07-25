@@ -12,10 +12,10 @@ class BotEngine
   constructor: (@settings) ->
     {@prefix} = @settings
     @bot = new Discord.Client
-    @serverData = new ServerManager this
-    @permissions = new PermissionManager this
-    @commands = new CommandManager this
-    @modules = new ModuleManager this
+    @serverData = new ServerManager @
+    @permissions = new PermissionManager @
+    @commands = new CommandManager @
+    @modules = new ModuleManager @
     @bot.on 'ready', @onReady
     @bot.on 'serverCreated', @onServerCreated
     @bot.on 'serverDeleted', @onServerDeleted

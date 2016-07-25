@@ -1,4 +1,10 @@
 CoffeeScript = require 'coffee-script'
+prune = require 'json-prune'
+format = require 'json-format'
+formatSettings =
+  type: 'space',
+  size: 2
+G = {}
 
 class EvalModule
   constructor: (@engine)->
@@ -13,7 +19,9 @@ class EvalModule
   cevalCommandFunction: (msg, args, bot, engine)=>
     # Utillity Functions
     p = (text)-> bot.sendMessage msg.channel, text
-    j = (obj)-> p JSON.stringify obj
+    j = (obj, length)->
+      pruned = prune obj, length
+      p "```json\n#{format(JSON.parse(pruned),formatSettings)}\n```"
     # Eval
     eval(CoffeeScript.compile(args, bare: true))
   

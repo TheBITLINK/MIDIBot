@@ -15,11 +15,13 @@ class ConvertModule
     @convertCommand = @commands.registerCommand 'convert', commandOptions, @convertFunc
     
   convertFunc: (msg,args)=>
-    return @bot.reply msg 'No video specified' if not args.trim()
+    {converting} = @getServerData(msg.server)
+    return @bot.reply msg, 'No video specified' if not args.trim()
+    return @bot.reply msg, "There's an ongoing conversion from this server, try again after that conversion is complete!" if converting
     chance = new Chance()
     fname = chance.string {length: 6, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'}
     wav = new VideoToWav @engine, msg, args, fname
-    wav.beginConvert(@convertCallback1)
+    wav.beginConvert @convertCallback1
   
   convertCallback1: (error, msg, convert)=>
     if error
@@ -44,6 +46,7 @@ class ConvertModule
 
   shutdown: ()=>
     @commands.unregisterCommand 'convert'
-    
+
+  getServerData: (server)=> @engine.serverData.servers[server.id]
 
 module.exports = ConvertModule

@@ -7,17 +7,20 @@ class WavToMidi
     @midiPath = './data/tmp/'+@filename+'.mid'
 
   beginConvert: (@cb)=>
-    cb = @cb
-    msg = @msg
-    path = @path
-    midiPath = @midiPath
-    midiConvert = this
+    data = @getServerData(@msg.server)
+    {cb, msg, path, midiPath} = @
+    midiConvert = @
     fs.exists @path, (exists)->
-      cb(false, msg) if not exists
+      return cb(false, msg) if not exists
+      data.converting = true
       waon = child_process.spawn 'waon', ['-i', path, '-o', midiPath]
-      waon.on 'exit', (err)->cb(err isnt 0, msg, midiConvert)
+      waon.on 'exit', (err)->
+        cb(err isnt 0, msg, midiConvert)
+        data.converting = false
 
   deleteFiles: ()=>
     fs.unlink @midiPath
+
+  getServerData: (server)=> @engine.serverData.servers[server.id]
 
 module.exports = WavToMidi

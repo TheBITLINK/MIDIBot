@@ -27,6 +27,7 @@
   },
   "homepage": "https://gitlab.com/TheBITLINK/MIDIBot#README",
   "dependencies": {
+    "async": "^2.0.1",
     "bufferutil": "^1.2.1",
     "chance": "^1.0.4",
     "coffee-script": "^1.10.0",
@@ -34,6 +35,9 @@
     "dotenv": "^2.0.0",
     "ffmpeg": "0.0.4",
     "git-rev": "^0.2.1",
+    "json-format": "^0.1.2",
+    "json-prune": "^1.0.1",
+    "mkdirp": "^0.5.1",
     "moment": "^2.14.1",
     "path": "^0.12.7",
     "request": "^2.74.0",

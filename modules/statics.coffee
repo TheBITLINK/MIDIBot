@@ -20,6 +20,7 @@ class StatsModule
     Current Version: git-#{@engine.version}
     Platform: #{os.platform()} (#{os.arch()})
     Memory Usage: #{mem}MB (#{memfree}MB free)
+    Load Average: #{JSON.stringify(os.loadavg())}
     Bot Uptime: #{uptime}
     
     Currently joined to #{serverCount} servers and 0 voice channels.

@@ -1,7 +1,8 @@
-# Hacky Hack
 botEngine = require './core'
 dotenv = require 'dotenv'
+mkdirp = require 'mkdirp'
 
+mkdirp 'data/tmp'
 dotenv.config()
 botSettings =
   prefix: process.env.BOT_PREFIX
