@@ -10,14 +10,12 @@ class VideoToWav
     @wavPath = './data/tmp/'+@filename+'.wav'
 
   beginConvert: (@cb)=>
-    @bot.startTyping @msg.channel
     data = @getServerData @msg.server
     data.converting = true
     youtubedl.getInfo @nameOrUrl, ['--default-search', 'ytsearch', '-f', 'bestaudio'], @onInfo
 
   onInfo: (err, @info)=>
     data = @getServerData @msg.server
-    @bot.stopTyping @msg.channel
     if err
       cb err
       data.converting = false
