@@ -141,6 +141,7 @@ class PlayerModule
           """
         
       qI.on 'end', ()->
+        convert.deleteFiles()
         if not queue.items.length and not qI.skipped
           m.bot.sendMessage msg.channel, 'Nothing more to play.'
           audioPlayer.clean true
