@@ -141,7 +141,7 @@ class PlayerModule
           """
         
       qI.on 'end', ()->
-        if not queue.items.length and not queue.currentItem
+        if not queue.items.length and not qI.skipped
           m.bot.sendMessage msg.channel, 'Nothing more to play.'
           audioPlayer.clean true
 
