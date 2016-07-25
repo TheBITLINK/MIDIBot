@@ -127,7 +127,7 @@ class PlayerModule
 
       qI = new QueueItem {
         title: convert.midiConvert.wavConvert.info.title
-        duration: convert.wavConvert.info.duration
+        duration: convert.midiConvert.wavConvert.info.duration
         requestedBy: msg.author
         playInChannel: msg.author.voiceChannel
         path: convert.wavPath
