@@ -46,7 +46,7 @@ class PlayerModule
     return @bot.reply msg, 'No video specified.' if not args.trim()
     return @bot.reply msg, 'You must be in a voice channel to request MIDIs.' if not msg.author.voiceChannel
     return @bot.reply msg, "There's an ongoing conversion from this server, try again after that conversion is complete!" if converting
-    @bot.reply msg, 'Your request has been received. **Please be patient**, converting to MIDI requires a *lot* of processing power (seriously!), so it might take from 30 seconds up to several minutes depending of how much conversions are being made a the same time.'
+    @bot.reply msg, 'Your request has been received. **Please be patient**, converting to MIDI requires a *lot* of processing power (seriously!), so it might take from 30 seconds up to several minutes depending of how much conversions are being made at the same time and the length of the song.'
     chance = new Chance()
     fname = chance.string {length: 6, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'}
     wav = new VideoToWav @engine, msg, args, fname
