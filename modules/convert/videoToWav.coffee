@@ -17,7 +17,7 @@ class VideoToWav
   onInfo: (err, @info)=>
     data = @getServerData @msg.server
     if err
-      @cb err
+      @cb err, @msg
       data.converting = false
       return
     duration = moment.duration(@info.duration).asSeconds/60

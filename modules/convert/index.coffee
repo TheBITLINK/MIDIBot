@@ -24,15 +24,15 @@ class ConvertModule
     wav.beginConvert @convertCallback1
   
   convertCallback1: (error, msg, convert)=>
-    if error and convert?
-      convert.deleteFiles()
+    if error
+      convert.deleteFiles() if convert?
       return @bot.reply(msg, 'There was an error while trying to convert to MIDI.')
     midi = new WavToMidi @engine, msg, convert.wavPath, convert.filename, convert
     midi.beginConvert @convertCallback2
 
   convertCallback2: (error, msg, convert)=>
-    if error and convert?
-      convert.wavConvert.deleteFiles()
+    if error
+      convert.wavConvert.deleteFiles() if convert?
       convert.deleteFiles()
       return @bot.reply(msg, 'There was an error while trying to convert to MIDI.')
     convert.wavConvert.deleteFiles()
