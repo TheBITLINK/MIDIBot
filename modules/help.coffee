@@ -6,7 +6,7 @@ class helpModule
       description: 'Displays help about MIDIBot'
     @helpCommand = @commands.registerCommand 'help', helpOptions, @helpCommandFunction
 
-  helpCommandFunction: (msg, args)->
+  helpCommandFunction: (msg, args)=>
     reply = """
     **MIDIBot Beta #{@engine.version} (#{@engine.versionName})**
     Made by <@164588804362076160>
