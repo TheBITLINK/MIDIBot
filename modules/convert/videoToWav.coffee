@@ -9,7 +9,7 @@ class VideoToWav
     @path = './data/tmp/'+@filename+'.webm'
     @wavPath = './data/tmp/'+@filename+'.wav'
 
-  beginConvert: (@cb=(e)->console.error(e))=>
+  beginConvert: (@cb)=>
     data = @getServerData @msg.server
     data.converting = true
     youtubedl.getInfo @nameOrUrl, ['--default-search', 'ytsearch', '-f', 'bestaudio'], @onInfo
@@ -40,7 +40,7 @@ class VideoToWav
     wavConvert = @
     fs.exists @path, (exists)->
       data.converting = false
-      return cb(false, msg) if not exists
+      return @cb(false, msg) if not exists
       data.converting = true
       ffmpeg = child_process.spawn 'ffmpeg', ['-i', path, wavPath]
       ffmpeg.on 'exit', (err)->
