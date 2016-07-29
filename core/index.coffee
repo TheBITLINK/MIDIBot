@@ -39,11 +39,11 @@ class BotEngine
 
   onServerDeleted: (server)=> @serverData.removeServer server
 
-  onServerRoleCreated: (role)=> @permissions.updateAdminInServer(role.server)
-  onServerRoleDeleted: (role)=> @permissions.updateAdminInServer(role.server)
-  onServerRoleUpdated: (oldRole, newRole)=> @permissions.updateAdminInServer(newRole.server)
+  onServerRoleCreated: (role)=> @permissions.updateAdminsInServer(role.server)
+  onServerRoleDeleted: (role)=> @permissions.updateAdminsInServer(role.server)
+  onServerRoleUpdated: (oldRole, newRole)=> @permissions.updateAdminsInServer(newRole.server)
 
-  onServerMemberUpdated: (server)=> @permissions.updateAdminInServer(server)
+  onServerMemberUpdated: (server)=> @permissions.updateAdminsInServer(server)
 
   onMessage: (msg)=>
     try
