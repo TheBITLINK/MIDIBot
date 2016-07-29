@@ -7,6 +7,7 @@ WavToMidi = require '../convert/wavToMIDI'
 MidiToWav = require '../convert/midiToWav'
 QueueItem = require '../../models/audioQueueItem'
 moment = require 'moment'
+pad = require 'pad-left'
 
 class PlayerModule
   constructor: (@engine)->
