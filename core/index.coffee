@@ -22,6 +22,7 @@ class BotEngine
     @bot.on 'serverRoleCreated', @onServerRoleCreated
     @bot.on 'serverRoleDeleted', @onServerRoleDeleted
     @bot.on 'serverRoleUpdated', @onServerRoleUpdated
+    @bot.on 'serverMemberUpdated', @
     @bot.on 'message', @onMessage
     @bot.on 'disconnected', @establishConnection
     @bootDate = new Date()
@@ -38,9 +39,11 @@ class BotEngine
 
   onServerDeleted: (server)=> @serverData.removeServer server
 
-  onServerRoleCreated: (role)=> @permissions.updateAdmins()
-  onServerRoleDeleted: (role)=> @permissions.updateAdmins()
-  onServerRoleUpdated: (oldRole, newRole)=> @permissions.updateAdmins()
+  onServerRoleCreated: (role)=> @permissions.updateAdminInServer(role.server)
+  onServerRoleDeleted: (role)=> @permissions.updateAdminInServer(role.server)
+  onServerRoleUpdated: (oldRole, newRole)=> @permissions.updateAdminInServer(newRole.server)
+
+  onServerMemberUpdated: (server)=> @permissions.updateAdminInServer(server)
 
   onMessage: (msg)=>
     try
