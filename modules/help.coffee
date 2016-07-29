@@ -28,15 +28,15 @@ class helpModule
     #{@prefix}ping                 - Pong!
 
     Bot Commanders:
-    #{@prefix}volume  <vol>       - Sets volume of the bot
-    #{@prefix}skip                - Skips currently playing MIDI
-    #{@prefix}pause               - Pauses MIDI playback
-    #{@prefix}resume              - Resumes MIDI playback
-    #{@prefix}stop                - Stops MIDI playback an clears the queue
-    #{@prefix}disable             - "Disables" the bot (will only accept commands from Bot Commanders)
-    #{@prefix}enable              - Enables the bot
-    #{@prefix}setnick             - Sets the nickname of the bot
-    #{@prefix}clean               - Deletes messages sent by the bot (requires permission to do so)
+    #{@prefix}volume  <vol>        - Sets volume of the bot
+    #{@prefix}skip                 - Skips currently playing MIDI
+    #{@prefix}pause                - Pauses MIDI playback
+    #{@prefix}resume               - Resumes MIDI playback
+    #{@prefix}stop                 - Stops MIDI playback an clears the queue
+    #{@prefix}disable              - "Disables" the bot (will only accept commands from Bot Commanders)
+    #{@prefix}enable               - Enables the bot
+    #{@prefix}setnick              - Sets the nickname of the bot
+    #{@prefix}clean                - Deletes messages sent by the bot (requires permission to do so)
 
     Owner:
     [It's a secret to everyone]
