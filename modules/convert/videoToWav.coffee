@@ -2,6 +2,7 @@ youtubedl = require 'youtube-dl'
 fs = require 'fs'
 child_process = require 'child_process'
 moment = require 'moment'
+pad = require 'pad-left'
 
 class VideoToWav
   constructor: (@engine, @msg, @nameOrUrl, @filename)->
@@ -14,12 +15,19 @@ class VideoToWav
     data.converting = true
     youtubedl.getInfo @nameOrUrl, ['--default-search', 'ytsearch', '-f', 'bestaudio'], @onInfo
 
+  # Parse duration
+  parseDuration: (durationStr)-> 
+    d = durationStr.split ':'
+    "#{d[0]}:#{pad d[1], 2, '0'}"
+
   onInfo: (err, @info)=>
     data = @getServerData @msg.server
     if err
       @cb err, @msg
       data.converting = false
       return
+    # Someone has to do it :'(
+    @info.duration = @parseDuration @info.duration
     duration = moment.duration(@info.duration).asSeconds/60
     if duration > 300 or duration <= 0
       @bot.reply @msg, "You can't convert videos greater than 5 minutes on length!"
