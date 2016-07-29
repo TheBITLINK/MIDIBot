@@ -17,7 +17,7 @@ class VideoToWav
   onInfo: (err, @info)=>
     data = @getServerData @msg.server
     if err
-      cb err
+      @cb err
       data.converting = false
       return
     duration = moment.duration(@info.duration).asSeconds/60
@@ -40,7 +40,7 @@ class VideoToWav
     wavConvert = @
     fs.exists @path, (exists)->
       data.converting = false
-      return @cb(false, msg) if not exists
+      return cb(false, msg) if not exists
       data.converting = true
       ffmpeg = child_process.spawn 'ffmpeg', ['-i', path, wavPath]
       ffmpeg.on 'exit', (err)->
