@@ -14,7 +14,7 @@ class helpModule
     This bot works much like most music bots, except it converts to midi! :D
     
     For feedback, or to get this garbage in your server, go to:
-    https://midibot.xyz/
+    https://discord.gg/cSRkbqK
     (you can also send me a DM, i am so lonely rn ;-;)
 
     Command List:
