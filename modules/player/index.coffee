@@ -117,6 +117,7 @@ class PlayerModule
           reply += "*(#{l-i} more...)*"
       else
          reply += "Queue is currently empty."
+      @bot.sendMessage msg.channel, reply
 
 # Callbacks
   convertCallback1: (error, msg, convert)=>
