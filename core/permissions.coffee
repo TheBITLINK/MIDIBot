@@ -15,7 +15,7 @@ class BotPermissionManager
 
   isAdmin: (user, server, globalOnly)=>
     return true if user.id in @admins or user.id in @owner
-    if not globalOnly and user.id in @serverData.servers[server].admins
+    if not globalOnly and user.id in @serverData.servers[server.id].admins
       true
     else
       false
