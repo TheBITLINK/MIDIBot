@@ -28,8 +28,7 @@ class VideoToWav
       return
     # Someone has to do it :'(
     @info.duration = @parseDuration @info.duration
-    duration = moment.duration(@info.duration).asSeconds()
-    console.log duration
+    duration = moment.duration(@info.duration).asSeconds()/60
     if duration > 600 or duration <= 0
       @bot.reply @msg, "You can't convert videos greater than 10 minutes on length!"
       data.converting = false
