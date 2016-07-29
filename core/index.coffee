@@ -22,7 +22,7 @@ class BotEngine
     @bot.on 'serverRoleCreated', @onServerRoleCreated
     @bot.on 'serverRoleDeleted', @onServerRoleDeleted
     @bot.on 'serverRoleUpdated', @onServerRoleUpdated
-    @bot.on 'serverMemberUpdated', @
+    @bot.on 'serverMemberUpdated', @onServerMemberUpdated
     @bot.on 'message', @onMessage
     @bot.on 'disconnected', @establishConnection
     @bootDate = new Date()
