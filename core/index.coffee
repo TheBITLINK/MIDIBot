@@ -27,6 +27,7 @@ class BotEngine
     @bot.on 'disconnected', @establishConnection
     @bootDate = new Date()
     git.short @devVersion
+    @version = "0.3.1"
     
   onReady: =>
     @bot.setPlayingGame @prefix+'help'
@@ -53,7 +54,7 @@ class BotEngine
       @commands.executeCommand msg
 
   devVersion: (version)=>
-    @version = version
+    @versionName = 'git-'+version
 
   establishConnection: =>
     @bot.loginWithToken @settings.token

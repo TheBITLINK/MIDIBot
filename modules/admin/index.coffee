@@ -29,7 +29,7 @@ class AdminModule
 
   disableFunc: (msg)=>
     @serverData.servers[msg.server.id].enabled = false
-    @bot.sendMessage msg.channel, 'MIDIBot disabled for this server (will only accept commands from server admins).'
+    @bot.sendMessage msg.channel, 'MIDIBot disabled for this server (will only accept commands from Bot Commanders).'
 
   restartFunc: (msg)=>
     @bot.sendMessage msg.channel, 'MIDIBot is restarting...'
@@ -57,6 +57,6 @@ class AdminModule
       
 
   shutdown: =>
-    @commands.unregisterCommands [@setnickCommand, @enableCommand, @disableCommand, @restartCommand, @updateCommand]
+    @commands.unregisterCommands [@setnickCommand, @enableCommand, @disableCommand, @restartCommand, @updateCommand, @cleanCommand]
 
 module.exports = AdminModule

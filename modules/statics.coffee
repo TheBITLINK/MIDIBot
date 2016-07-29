@@ -11,13 +11,13 @@ class StatsModule
 
   statsCommandFunction: (msg, args)->
     uptime = moment().from @engine.bootDate, true
-    mem = Math.floor process.memoryUsage().heapUsed / 1024000
+    mem = Math.floor process.memoryUsage().heapTotal / 1024000
     memfree = Math.floor os.freemem() / 1024000
     serverCount = @bot.servers.length
     reply = """
     **MIDIBot Statics**
 
-    Current Version: git-#{@engine.version}
+    Current Version: #{@engine.version} (#{@engine.versionName})
     Platform: #{os.platform()} (#{os.arch()})
     Memory Usage: #{mem}MB (#{memfree}MB free)
     Load Average: #{JSON.stringify(os.loadavg())}

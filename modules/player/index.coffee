@@ -21,7 +21,7 @@ class PlayerModule
     @skipCommand = @commands.registerCommand 'skip', skipOptions, @skipFunc
     # Stop Command
     stopOptions =
-      description: 'Stops the currently playin MIDI and clears the Queue.'
+      description: 'Stops the currently playing MIDI and clears the Queue.'
       adminOnly: true
     @stopCommand = @commands.registerCommand 'stop', stopOptions, @stopFunc
     # Pause Command
@@ -156,6 +156,6 @@ class PlayerModule
   getServerData: (server)=> @engine.serverData.servers[server.id]
 
   shutdown: =>
-    @commands.unregisterCommands [@playCommand]
+    @commands.unregisterCommands [@playCommand, @skipCommand, @stopCommand, @pauseCommand, @resumeCommand, @volumeCommand]
 
 module.exports = PlayerModule
