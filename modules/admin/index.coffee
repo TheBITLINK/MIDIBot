@@ -49,7 +49,7 @@ class AdminModule
 
   cleanFunc: (msg,args,bot)=>
     hasError = false
-    for m in msg.channel.messages when m.author is bot.user or m.content.indexOf @prefix is 0
+    for m in msg.channel.messages when m.author is bot.user or (m.content.indexOf @prefix) is 0
       bot.deleteMessage m,{},(err)->
         if err and not hasError
           bot.sendMessage msg.channel, "Couldn't delete messages, check the bot permissions."
