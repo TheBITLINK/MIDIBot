@@ -9,7 +9,7 @@ class VideoToWav
     @path = './data/tmp/'+@filename+'.webm'
     @wavPath = './data/tmp/'+@filename+'.wav'
 
-  beginConvert: (@cb)=>
+  beginConvert: (@cb=(e)->console.error(e))=>
     data = @getServerData @msg.server
     data.converting = true
     youtubedl.getInfo @nameOrUrl, ['--default-search', 'ytsearch', '-f', 'bestaudio'], @onInfo
