@@ -2,13 +2,14 @@ childProcess = require 'child_process'
 
 class AdminModule
   constructor: (@engine)->
-    {@bot, @commands, @serverData} = @engine
+    {@bot, @commands, @serverData, @prefix} = @engine
     # Admin Commands
     adminOptions =
       adminOnly: true
     @setnickCommand =  @commands.registerCommand 'setnick', adminOptions, @setnickFunc
     @enableCommand =  @commands.registerCommand 'enable', adminOptions, @enableFunc
     @disableCommand =  @commands.registerCommand 'disable', adminOptions, @disableFunc
+    @cleanCommand =  @commands.registerCommand 'clean', adminOptions, @cleanFunc
     # Restart Command
     restartOptions =
       ownerOnly: true
@@ -45,6 +46,15 @@ class AdminModule
                        MIDIBot is restarting...
                        """
       setTimeout process.exit, 2000
+
+  cleanFunc: (msg,args,bot)=>
+    hasError = false
+    for m in msg.channel.messages when m.author is bot.user or m.content.indexOf @prefix is 0
+      bot.deleteMessage m,{},(err)->
+        if err and not hasError
+          bot.sendMessage msg.channel, "Couldn't delete messages, check the bot permissions."
+          hasError = true
+      
 
   shutdown: =>
     @commands.unregisterCommands [@setnickCommand, @enableCommand, @disableCommand, @restartCommand, @updateCommand]

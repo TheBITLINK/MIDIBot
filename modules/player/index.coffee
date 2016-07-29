@@ -37,7 +37,7 @@ class PlayerModule
     # Volume Command
     volumeOptions =
       description: 'Sets the volume'
-      adminOnly: true
+      #adminOnly: true
     @volumeCommand = @commands.registerCommand 'volume', volumeOptions, @volumeFunc
 
 # Commands
