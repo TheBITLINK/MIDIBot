@@ -103,26 +103,26 @@ class PlayerModule
     else
       @bot.sendMessage msg.channel, "Invalid volume provided."
 
-    queueFunc: (msg, args)=>
-      {audioPlayer, queue} = @getServerData(msg.server)
-      return @bot.sendMessage msg.channel, "No MIDIs playing on the current server." if not queue.currentItem
-      qI = queue.currentItem
-      reply = """
-      **Now Playing In** `#{qI.playInChannel.name}`: 
-      `#{qI.title}` (#{qI.duration}) Requested By #{qI.requestedBy.username}
+  queueFunc: (msg, args)=>
+    {audioPlayer, queue} = @getServerData(msg.server)
+    return @bot.sendMessage msg.channel, "No MIDIs playing on the current server." if not queue.currentItem
+    qI = queue.currentItem
+    reply = """
+    **Now Playing In** `#{qI.playInChannel.name}`: 
+    `#{qI.title}` (#{qI.duration}) Requested By #{qI.requestedBy.username}
 
-      """
-      if queue.items.length
-        reply += "Up next:\n"
-        l = queue.items.length
-        i = 0
-        for qi in queue.items when i < 10
-          reply += "**#{++i}.** `#{qI.title}` (#{qI.duration}) Requested By #{qI.requestedBy.username}"
-        if l > 10
-          reply += "*(#{l-i} more...)*"
-      else
-         reply += "Queue is currently empty."
-      @bot.sendMessage msg.channel, reply
+    """
+    if queue.items.length
+      reply += "Up next:\n"
+      l = queue.items.length
+      i = 0
+      for qi in queue.items when i < 10
+        reply += "**#{++i}.** `#{qI.title}` (#{qI.duration}) Requested By #{qI.requestedBy.username}"
+      if l > 10
+        reply += "*(#{l-i} more...)*"
+    else
+       reply += "Queue is currently empty."
+    @bot.sendMessage msg.channel, reply
 
 # Callbacks
   convertCallback1: (error, msg, convert)=>
