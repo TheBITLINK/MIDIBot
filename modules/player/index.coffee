@@ -142,9 +142,10 @@ class PlayerModule
         
       qI.on 'end', ()->
         convert.deleteFiles()
-        if not queue.items.length and not qI.skipped
-          m.bot.sendMessage msg.channel, 'Nothing more to play.'
-          audioPlayer.clean true
+        setTimeout ()->
+          if not queue.items.length and not queue.currentItem
+            m.bot.sendMessage msg.channel, 'Nothing more to play.'
+            audioPlayer.clean true
 
       m.bot.sendMessage msg.channel, "**#{msg.author}** added `#{qI.title}` (#{qI.duration}) to the queue! (Position \##{queue.items.length+1})"
 
