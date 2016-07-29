@@ -6,6 +6,7 @@ VideoToWav = require '../convert/videoToWav'
 WavToMidi = require '../convert/wavToMIDI'
 MidiToWav = require '../convert/midiToWav'
 QueueItem = require '../../models/audioQueueItem'
+moment = require 'moment'
 
 class PlayerModule
   constructor: (@engine)->
@@ -107,17 +108,20 @@ class PlayerModule
     {audioPlayer, queue} = @getServerData(msg.server)
     return @bot.sendMessage msg.channel, "No MIDIs playing on the current server." if not queue.currentItem
     qI = queue.currentItem
+    currentTime = moment.duration audioPlayer.voiceConnection.streamTime
+    currentTime = @parseDuration "#{currentTime.minutes()}:#{currentTime.seconds()}"
     reply = """
     **Now Playing In** `#{qI.playInChannel.name}`: 
-    `#{qI.title}` (#{qI.duration}) Requested By #{qI.requestedBy.username}
+    `#{qI.title}` (#{currentTime}/#{qI.duration}) Requested By #{qI.requestedBy.username}
+
 
     """
     if queue.items.length
-      reply += "Up next:\n"
+      reply += "**Up next:**\n"
       l = queue.items.length
       i = 0
       for qi in queue.items when i < 10
-        reply += "**#{++i}.** `#{qI.title}` (#{qI.duration}) Requested By #{qI.requestedBy.username}"
+        reply += "**#{++i}.** `#{qi.title}` (#{qi.duration}) Requested By #{qi.requestedBy.username}"
       if l > 10
         reply += "*(#{l-i} more...)*"
     else
@@ -180,6 +184,10 @@ class PlayerModule
 
 # Utillity Functions
   getServerData: (server)=> @engine.serverData.servers[server.id]
+
+  parseDuration: (durationStr)-> 
+    d = durationStr.split ':'
+    "#{d[0]}:#{pad d[1], 2, '0'}"
 
   shutdown: =>
     @commands.unregisterCommands [@playCommand, @skipCommand, @stopCommand, @pauseCommand, @resumeCommand, @volumeCommand]
