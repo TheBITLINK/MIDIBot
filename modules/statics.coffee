@@ -23,7 +23,7 @@ class StatsModule
     Load Average: #{JSON.stringify(os.loadavg())}
     Bot Uptime: #{uptime}
     
-    Currently joined to #{serverCount} servers and 0 voice channels.
+    Currently joined to #{serverCount} servers and #{@bot.voiceConnectios.length} voice channels.
     """
     @bot.sendMessage msg.channel, reply
 
