@@ -39,6 +39,11 @@ class PlayerModule
       description: 'Sets the volume'
       #adminOnly: true
     @volumeCommand = @commands.registerCommand 'volume', volumeOptions, @volumeFunc
+    # Queue Command
+    queueOptions =
+      description: 'Displays the current queue'
+      #adminOnly: true
+    @queueCommand = @commands.registerCommand 'queue', queueOptions, @queueFunc
 
 # Commands
   playFunc: (msg, args)=>
