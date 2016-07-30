@@ -13,9 +13,10 @@ class helpModule
 
     This bot works much like most music bots, except it converts to midi! :D
     
-    For feedback, or to get this garbage in your server, go to:
-    https://discord.gg/cSRkbqK
-    (you can also send me a DM, i am so lonely rn ;-;)
+    To add this garbage to your server, use this:
+    https://discordapp.com/oauth2/authorize?client_id=206474212561387520&scope=bot&permissions=8192
+    
+    This bot is in an experimental phase, if you find any bugs feel free to send me a DM
 
     Command List:
     ```
