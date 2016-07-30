@@ -18,7 +18,8 @@ class VideoToWav
   # Parse duration
   parseDuration: (durationStr)-> 
     d = durationStr.split ':'
-    "#{d[0]}:#{pad d[1], 2, '0'}"
+    #"#{d[0]}:#{pad d[1], 2, '0'}"
+    durationStr
 
   onInfo: (err, @info)=>
     data = @getServerData @msg.server
