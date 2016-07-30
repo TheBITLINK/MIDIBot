@@ -188,7 +188,8 @@ class PlayerModule
 
   parseDuration: (durationStr)-> 
     d = durationStr.split ':'
-    "#{d[0]}:#{pad d[1], 2, '0'}"
+    #"#{d[0]}:#{pad d[1], 2, '0'}"
+    durationStr
 
   shutdown: =>
     @commands.unregisterCommands [@playCommand, @skipCommand, @stopCommand, @pauseCommand, @resumeCommand, @volumeCommand]
