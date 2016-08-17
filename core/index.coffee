@@ -7,11 +7,15 @@ ModuleManager = require './modules'
 PermissionManager = require './permissions'
 ServerManager = require './servers'
 git = require 'git-rev'
+os = require 'os'
 
 class BotEngine
   constructor: (@settings) ->
     {@prefix} = @settings
-    @bot = new Discord.Client
+    @bot = new Discord.Client {
+        shardId: 0
+        shardCount: os.cpus().length
+    }
     @serverData = new ServerManager @
     @permissions = new PermissionManager @
     @commands = new CommandManager @
