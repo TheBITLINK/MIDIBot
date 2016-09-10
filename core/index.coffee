@@ -13,8 +13,7 @@ class BotEngine
   constructor: (@settings) ->
     {@prefix} = @settings
     @bot = new Discord.Client {
-      shardId: 0
-      shardCount: os.cpus().length
+      shardId: process.env.pm_id
     }
     @serverData = new ServerManager @
     @permissions = new PermissionManager @
