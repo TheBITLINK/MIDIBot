@@ -2,6 +2,8 @@ apps:
   - name   : midiBot
     interpreter: ./node_modules/.bin/coffee
     script : main.coffee
+    instances: max
+    exec_mode: cluster
     env    :
       NODE_ENV: production      
     env_staging:
