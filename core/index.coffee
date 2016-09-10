@@ -12,9 +12,7 @@ os = require 'os'
 class BotEngine
   constructor: (@settings) ->
     {@prefix} = @settings
-    @bot = new Discord.Client {
-      shardCount: os.cpus().length
-    }
+    @bot = new Discord.Client()
     @serverData = new ServerManager @
     @permissions = new PermissionManager @
     @commands = new CommandManager @
