@@ -1,7 +1,6 @@
 apps:
   - name   : midiBot
-    interpreter: ./node_modules/.bin/coffee
-    script : main.coffee
+    script : wrapper.js
     env    :
       NODE_ENV: production      
     env_staging:
