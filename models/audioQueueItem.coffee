@@ -1,4 +1,5 @@
-EventEmitter = require 'events';
+EventEmitter = require 'events'
+moment = require 'moment'
 
 class QueueItem extends EventEmitter
   constructor: (data)->
@@ -7,7 +8,10 @@ class QueueItem extends EventEmitter
        @duration,
        @requestedBy,
        @playInChannel,
-       @path,
+       @midiBuffer,
     } = data
+    @voteSkip = []
+    @originalDuration = @duration
+    
 
 module.exports = QueueItem

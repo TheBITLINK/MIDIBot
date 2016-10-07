@@ -1,63 +1,48 @@
 ###
 The Main Server Class
 ###
-Discord = require 'discord.js'
+Discordie = require 'discordie'
 CommandManager = require './commands'
 ModuleManager = require './modules'
 PermissionManager = require './permissions'
-ServerManager = require './servers'
+GuildManager = require './guilds'
 git = require 'git-rev'
-os = require 'os'
+# { Guild } = require '../models'
 
 class BotEngine
   constructor: (@settings) ->
-    {@prefix} = @settings
-    @bot = new Discord.Client()
-    @serverData = new ServerManager @
+    {@prefix, @name} = @settings
+    @bot = new Discordie { autoReconnect: true }
+    @guildData = new GuildManager @
     @permissions = new PermissionManager @
     @commands = new CommandManager @
     @modules = new ModuleManager @
-    @bot.on 'ready', @onReady
-    @bot.on 'serverCreated', @onServerCreated
-    @bot.on 'serverDeleted', @onServerDeleted
-    @bot.on 'serverRoleCreated', @onServerRoleCreated
-    @bot.on 'serverRoleDeleted', @onServerRoleDeleted
-    @bot.on 'serverRoleUpdated', @onServerRoleUpdated
-    @bot.on 'serverMemberUpdated', @onServerMemberUpdated
-    @bot.on 'message', @onMessage
-    @bot.on 'disconnected', @establishConnection
+    @bot.Dispatcher.on 'GATEWAY_READY', @onReady
+    @bot.Dispatcher.on 'MESSAGE_CREATE', @onMessage
     @bootDate = new Date()
     git.short @devVersion
-    @version = "0.3.1"
+    @version = "0.4.0"
+    global.Core = @
     
   onReady: =>
-    @bot.setPlayingGame @prefix+'help'
-    @serverData.initServers @bot.servers
-    @permissions.updateAdmins()
-  
-  onServerCreated: (server)=>
-    @serverData.addServer server
-    @permissions.updateAdmins()
+    @bot.User.setStatus 'dnd', {
+      # type: 1
+      name: "#{@prefix}help"
+      # url: 'https://www.twitch.tv/nothingactuallyherejaksjksfj'
+    } 
+    console.log 'Connected.'
 
-  onServerDeleted: (server)=> @serverData.removeServer server
-
-  onServerRoleCreated: (role)=> @permissions.updateAdminsInServer(role.server)
-  onServerRoleDeleted: (role)=> @permissions.updateAdminsInServer(role.server)
-  onServerRoleUpdated: (oldRole, newRole)=> @permissions.updateAdminsInServer(newRole.server)
-
-  onServerMemberUpdated: (server)=> @permissions.updateAdminsInServer(server)
-
-  onMessage: (msg)=>
-    try
-      if msg.server
-        return if not @serverData.servers[msg.server.id].enabled and not @permissions.isAdmin(msg.author, msg.server)
-    if msg.content[..@prefix.length-1] is @prefix
-      @commands.executeCommand msg
+  onMessage: (e)=>
+    if e.message.content[..@prefix.length-1] is @prefix
+      @commands.executeCommand e.message
 
   devVersion: (version)=>
     @versionName = 'git-'+version
 
-  establishConnection: =>
-    @bot.loginWithToken 'Bot ' + @settings.token
+  establishConnection: => @bot.connect { token: @settings.token }
+
+  getGuildData: (guild)=>
+    return @guildData.guilds[guild.id] if @guildData.guilds[guild.id]?
+    @guildData.addGuild guild
 
 module.exports = BotEngine

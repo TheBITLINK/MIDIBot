@@ -1,197 +1,76 @@
-###
-The Song Player
-###
-Chance = require 'chance'
-VideoToWav = require '../convert/videoToWav'
-WavToMidi = require '../convert/wavToMIDI'
-MidiToWav = require '../convert/midiToWav'
 QueueItem = require '../../models/audioQueueItem'
 moment = require 'moment'
-pad = require 'pad-left'
+reload = require('require-reload')(require)
+AudioModuleCommands = reload './commands'
+AudioHud = reload './hud'
+VideoUtils = reload './VideoUtils'
+MIDIBuffer = reload '../convert/MIDIBuffer'
 
-class PlayerModule
-  constructor: (@engine)->
-    {@bot, @commands, @permissions} = @engine
-    # Play Command
-    playOptions =
-      description: 'Adds a song to the queue. (You need to be in a voice channel)'
-    @playCommand = @commands.registerCommand 'play', playOptions, @playFunc
-    # Skip Command
-    skipOptions =
-      description: 'Skips currently playing MIDI.'
-      adminOnly: true
-    @skipCommand = @commands.registerCommand 'skip', skipOptions, @skipFunc
-    # Stop Command
-    stopOptions =
-      description: 'Stops the currently playing MIDI and clears the Queue.'
-      adminOnly: true
-    @stopCommand = @commands.registerCommand 'stop', stopOptions, @stopFunc
-    # Pause Command
-    pauseOptions =
-      description: 'Pauses currently playing MIDI.'
-      adminOnly: true
-    @pauseCommand = @commands.registerCommand 'pause', pauseOptions, @pauseFunc
-    # Resume Command
-    resumeOptions =
-      description: 'Resumes MIDI playback.'
-      adminOnly: true
-    @resumeCommand = @commands.registerCommand 'resume', resumeOptions, @resumeFunc
-    # Volume Command
-    volumeOptions =
-      description: 'Sets the volume'
-      #adminOnly: true
-    @volumeCommand = @commands.registerCommand 'volume', volumeOptions, @volumeFunc
-    # Queue Command
-    queueOptions =
-      description: 'Displays the current queue'
-      #adminOnly: true
-    @queueCommand = @commands.registerCommand 'queue', queueOptions, @queueFunc
+class PlayerModule extends BotModule
+  init: =>
+    { @permissions, @getGuildData } = @engine
+    @hud = new AudioHud @
+    @moduleCommands = new AudioModuleCommands @
 
-# Commands
-  playFunc: (msg, args)=>
-    {converting} = @getServerData(msg.server)
-    return @bot.reply msg, 'No video specified.' if not args.trim()
-    return @bot.reply msg, 'You must be in a voice channel to request MIDIs.' if not msg.author.voiceChannel
-    return @bot.reply msg, "There's an ongoing conversion from this server, try again after that conversion is complete!" if converting
-    @bot.reply msg, 'Your request has been received. **Please be patient**, converting to MIDI requires a *lot* of processing power (seriously!), so it might take from 30 seconds up to several minutes depending of how much conversions are being made at the same time and the length of the song.'
-    chance = new Chance()
-    fname = chance.string {length: 6, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'}
-    wav = new VideoToWav @engine, msg, args, fname
-    wav.beginConvert(@convertCallback1)
+  handleVideoInfo: (info, msg, args)=>
+    d = @getGuildData(msg.guild)
+    d.converting = true
+    # Check if duration is valid
+    duration = VideoUtils.parseTime info.duration
+       
+    if (duration > 1800 and not @permissions.isOwner(msg.author))
+      return msg.reply 'The requested song is too long.'
 
-  skipFunc: (msg)=>
-    {queue} = @getServerData(msg.server)
-    if queue.items.length or queue.currentItem
-      @bot.sendMessage msg.channel, "**#{msg.author.username}** skipped the current midi."
-      queue.nextItem()
-    else
-      @bot.sendMessage msg.channel, "No MIDIs playing on the current server."
-      
-  stopFunc: (msg)=>
-    {queue} = @getServerData(msg.server)
-    if queue.currentItem
-      queue.clearQueue()
-      @bot.sendMessage msg.channel, "**#{msg.author.username}** cleared the queue."
-    else
-      @bot.sendMessage msg.channel, "No MIDIs playing on the current server."
+    return if not isFinite(duration)
 
-  pauseFunc: (msg)=>
-    {audioPlayer} = @getServerData(msg.server)
-    if audioPlayer.currentStream
-      audioPlayer.pause()
-      @bot.sendMessage msg.channel, "**#{msg.author.username}** paused midi playback."
-    else
-      @bot.sendMessage msg.channel, "Nothing to pause."
+    omsg = null
 
-  resumeFunc: (msg)=>
-    {audioPlayer} = @getServerData(msg.server)
-    if audioPlayer.currentStream
-      audioPlayer.resume()
-      @bot.sendMessage msg.channel, "**#{msg.author.username}** resumed midi playback."
-    else
-      @bot.sendMessage msg.channel, "Nothing to resume."
+    msg.reply "Converting `#{info.title}` to MIDI... **please be patient**..."
+    .then (m)=> omsg = m
 
-  volumeFunc: (msg, args)=>
-    {audioPlayer} = @getServerData(msg.server)
-    if not args
-      return @bot.sendMessage msg.channel, "Current Volume: #{audioPlayer.volume*100}."
-    limit = 100
-    limit = 200 if @permissions.isAdmin msg.author
-    limit = 500 if @permissions.isOwner msg.author
-    volume = parseInt(args)
-    if volume > 0 and volume <= limit
-      audioPlayer.setVolume volume/100
-      @bot.sendMessage msg.channel, "**#{msg.author.username}** set the volume to #{volume}."
-    else
-      @bot.sendMessage msg.channel, "Invalid volume provided."
+    b = new MIDIBuffer(info.url)
 
-  queueFunc: (msg, args)=>
-    {audioPlayer, queue} = @getServerData(msg.server)
-    return @bot.sendMessage msg.channel, "No MIDIs playing on the current server." if not queue.currentItem
-    qI = queue.currentItem
-    currentTime = moment.duration audioPlayer.voiceConnection.streamTime
-    currentTime = @parseDuration "#{currentTime.minutes()}:#{currentTime.seconds()}"
-    reply = """
-    **Now Playing In** `#{qI.playInChannel.name}`: 
-    `#{qI.title}` (#{currentTime}/#{qI.duration}) Requested By #{qI.requestedBy.username}
-
-
-    """
-    if queue.items.length
-      reply += "**Up next:**\n"
-      l = queue.items.length
-      i = 0
-      for qi in queue.items when i < 10
-        reply += "**#{++i}.** `#{qi.title}` (#{qi.duration}) Requested By #{qi.requestedBy.username}"
-      if l > 10
-        reply += "*(#{l-i} more...)*"
-    else
-       reply += "Queue is currently empty."
-    @bot.sendMessage msg.channel, reply
-
-# Callbacks
-  convertCallback1: (error, msg, convert)=>
-    if error
-      convert.deleteFiles()
-      return @bot.reply msg, 'There was an error while trying to convert to MIDI.'
-    midi = new WavToMidi @engine, msg, convert.wavPath, convert.filename, convert
-    midi.beginConvert @convertCallback2
-
-  convertCallback2: (error, msg, convert)=>
-    convert.wavConvert.deleteFiles()
-    if error
-      convert.deleteFiles()
-      return @bot.reply msg, 'There was an error while trying to convert to MIDI.'
-    wav = new MidiToWav @engine, msg, convert.midiPath, convert.filename, convert
-    wav.beginConvert @convertCallback3
-    
-  convertCallback3: (error, msg, convert)=>
-    m = @
-    {queue, audioPlayer} = @getServerData(msg.server)
-    convert.midiConvert.deleteFiles()
-    if error
-      convert.deleteFiles()
-      return @bot.reply msg, 'There was an error while trying to convert to MIDI.'
-    convert.moveFiles "./data/servers/#{msg.server.id}/queue/#{convert.filename}.wav", (err)->
-      if not msg.author.voiceChannel or err
-        return m.bot.reply msg, 'There was an error while trying to convert to MIDI.'
-
+    b.once 'done', =>    
+      {queue, audioPlayer} = d
+      d.converting = false
+      # Create a new queue item
       qI = new QueueItem {
-        title: convert.midiConvert.wavConvert.info.title
-        duration: convert.midiConvert.wavConvert.info.duration
-        requestedBy: msg.author
-        playInChannel: msg.author.voiceChannel
-        path: convert.wavPath
+        title: info.title
+        duration
+        requestedBy: msg.member
+        playInChannel: msg.member.getVoiceChannel()
+        midiBuffer: b
       }
-
-      qI.on 'start', ()->
-        m.bot.sendMessage msg.channel, """
-          **Now Playing In** `#{qI.playInChannel.name}`:
-          ```#{qI.title}```
-          (Length: `#{qI.duration}` - Requested By #{qI.requestedBy.mention()})
-          """
-        
-      qI.on 'end', ()->
-        convert.deleteFiles()
-        setTimeout ()->
+      # Set events
+      durationstr = if isFinite(qI.duration) then moment.utc(qI.duration * 1000).format("HH:mm:ss") else '∞'
+      qI.once 'start', =>
+        if omsg
+          omsg.delete()
+          omsg = null
+        msg.channel.sendMessage @hud.nowPlaying msg.guild, qI, true
+          .then (m)=>
+            setTimeout (->m.delete()), 15000
+    
+      qI.once 'end', =>
+        setTimeout (()=>
           if not queue.items.length and not queue.currentItem
-            m.bot.sendMessage msg.channel, 'Nothing more to play.'
+            msg.channel.sendMessage 'Nothing more to play.'
+            .then (m)=>
+              setTimeout (->m.delete()), 15000
             audioPlayer.clean true
-
-      m.bot.sendMessage msg.channel, "**#{msg.author}** added `#{qI.title}` (#{qI.duration}) to the queue! (Position \##{queue.items.length+1})"
-
+        ), 100
+      
+      msg.channel.sendMessage @hud.addItem msg.guild, qI.requestedBy, qI, queue.items.length+1
+      .then (m)=>
+        if omsg
+          omsg.delete()
+          omsg = m;
+        setTimeout ->
+          if omsg
+            omsg.delete()
+            omsg = null
+        , 15000
+        msg.delete()
       queue.addToQueue qI
-    true
-
-# Utillity Functions
-  getServerData: (server)=> @engine.serverData.servers[server.id]
-
-  parseDuration: (durationStr)-> 
-    d = durationStr.split ':'
-    #"#{d[0]}:#{pad d[1], 2, '0'}"
-    durationStr
-
-  shutdown: =>
-    @commands.unregisterCommands [@playCommand, @skipCommand, @stopCommand, @pauseCommand, @resumeCommand, @volumeCommand]
 
 module.exports = PlayerModule

@@ -1,52 +1,21 @@
-###
-THIS IS WHERE THE REAL MAGIC HAPPENS ¯\_(ツ)_/¯
-###
-Chance = require 'chance'
-VideoToWav = require './videoToWav'
-WavToMidi = require './wavToMIDI'
+reload = require('require-reload')(require)
+MIDIBuffer = reload './MIDIBuffer'
+VideoUtils = reload '../player/VideoUtils'
 
-class ConvertModule
-  constructor: (@engine)->
-    {@bot,@commands} = @engine
-    # Convert Command!
-    commandOptions =
-      description: 'Converts a song to midi'
-      argExplain: '<url or title>'
-    @convertCommand = @commands.registerCommand 'convert', commandOptions, @convertFunc
-    
-  convertFunc: (msg,args)=>
-    {converting} = @getServerData(msg.server)
-    return @bot.reply msg, 'No video specified' if not args.trim()
-    return @bot.reply msg, "There's an ongoing conversion from this server, try again after that conversion is complete!" if converting
-    chance = new Chance()
-    fname = chance.string {length: 6, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'}
-    wav = new VideoToWav @engine, msg, args, fname
-    wav.beginConvert @convertCallback1
-  
-  convertCallback1: (error, msg, convert)=>
-    if error
-      convert.deleteFiles() if convert?
-      return @bot.reply(msg, 'There was an error while trying to convert to MIDI.')
-    midi = new WavToMidi @engine, msg, convert.wavPath, convert.filename, convert
-    midi.beginConvert @convertCallback2
-
-  convertCallback2: (error, msg, convert)=>
-    if error
-      convert.wavConvert.deleteFiles() if convert?
-      convert.deleteFiles()
-      return @bot.reply(msg, 'There was an error while trying to convert to MIDI.')
-    convert.wavConvert.deleteFiles()
-    @bot.sendFile msg.channel,
-                  convert.midiPath,
-                  convert.filename+".mid",
-                  msg.author.mention() + ", enjoy your high quality MIDI file!",
-                  (err, m)->
-                    @bot.reply msg "Couldnt send the MIDI file, check if the bot has permission to send files." if err
-                    convert.deleteFiles()
-
-  shutdown: ()=>
-    @commands.unregisterCommand 'convert'
-
-  getServerData: (server)=> @engine.serverData.servers[server.id]
+class ConvertModule extends BotModule
+  init: =>  
+    @registerCommand 'convert', (msg, args)->
+      d = @engine.getGuildData(msg.guild)
+      return msg.reply 'No video specified' if not args.trim()
+      return msg.reply "There's an ongoing conversion from this server, try again after that conversion is complete!" if d.converting
+      VideoUtils.getInfo args
+      .then (info)=>
+        console.log info
+        d.converting = true
+        msg.reply "Converting `#{info.title}` to MIDI... **please be patient**..."
+        conversion = new MIDIBuffer info.url
+        conversion.on 'done', (buffer)=>
+          d.converting = false
+          msg.channel.uploadFile buffer, "#{info.title}.mid", "#{msg.author.mention} here's your high quality MIDI file:"
 
 module.exports = ConvertModule

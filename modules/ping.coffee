@@ -1,15 +1,8 @@
-class PingModule
-  constructor: (@engine)->
-    {@bot, @commands} = @engine
-    # Ping Command
-    pingOptions =
-      description: 'Pong!'
-    @pingCommand = @commands.registerCommand 'ping', pingOptions, @pingCommandFunction
-
-  pingCommandFunction: (msg, args)->
-    @bot.reply msg, "Pong!"
-
-  shutdown: =>
-    @commands.unregisterCommand @pingCommand
+class PingModule extends BotModule
+  init: =>  
+    @registerCommand 'ping', (msg, args)->
+      sd = new Date(msg.timestamp).getTime()
+      msg.channel.sendMessage "Pong!"
+      .then (m)=> m.edit "Pong! `#{new Date(m.timestamp).getTime() - sd}ms`"
 
 module.exports = PingModule
