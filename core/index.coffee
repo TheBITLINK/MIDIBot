@@ -25,7 +25,7 @@ class BotEngine
     global.Core = @
     
   onReady: =>
-    @bot.User.setStatus 'dnd', {
+    @bot.User.setStatus 'online', {
       # type: 1
       name: "#{@prefix}help"
       # url: 'https://www.twitch.tv/nothingactuallyherejaksjksfj'
