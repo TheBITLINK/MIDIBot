@@ -47,7 +47,7 @@ class GuildAudioPlayer
   stop:   ()=>
     try
       @currentStream.stop()
-      # @currentStream.destroy()
+      @currentStream.destroy()
     @clean()
 
   getTimestamp: => @encStream.timestamp
