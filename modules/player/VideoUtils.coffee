@@ -6,7 +6,7 @@ class VideoUtil
   getInfo: (query)=> new Promise (resolve)=>
     youtubedl.getInfo query, ['--default-search', 'ytsearch', '-f', 'bestaudio'], (err, info)=>
       if err
-        return youtubedl.getInfo urlToFind, [], (error, info)=>
+        return youtubedl.getInfo query, [], (error, info)=>
           return msg.reply 'Something went wrong.' if error
           resolve(@getLength(info))
       resolve(@getLength(info))
