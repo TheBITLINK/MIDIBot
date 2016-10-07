@@ -42,7 +42,7 @@ class AdminModule extends BotModule
       @bot.User.setAvatar body if not error and response.statusCode == 200
 
   restartFunc: (msg)=>
-    msg.channel.sendMessage 'FocaBot is restarting...'
+    msg.channel.sendMessage 'MidiBot is restarting...'
     .then ()-> process.exit() # Let's hope PM2 restarts it :)
 
   updateFunc: (msg,args,bot)=>
@@ -55,7 +55,7 @@ class AdminModule extends BotModule
     childProcess.exec args, (error, stdout, stderr)->
       msg.channel.sendMessage """
                               ```diff
-                              + [focaBot@#{os.hostname()} ~]$ #{args}
+                              + [midiBot@#{os.hostname()} ~]$ #{args}
 
                               #{stdout}
                               ```

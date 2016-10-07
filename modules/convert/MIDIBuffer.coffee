@@ -25,11 +25,15 @@ class MIDIBuffer extends EventEmitter
 
   getWavStream: =>
     return null if not @internalBuffer
-    midiToWav = spawn 'timidity', [
+    @midiToWav = spawn 'timidity', [
       '-OwlS', '-'
       '-o', '-'
     ]
-    midiToWav.stdin.write(@internalBuffer)
-    return midiToWav.stdout
+    @midiToWav.stdin.write(@internalBuffer)
+    return @midiToWav.stdout
+
+  destroy: =>
+    try
+      @midiToWav.kill()
     
 module.exports = MIDIBuffer

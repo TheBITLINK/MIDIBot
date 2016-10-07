@@ -25,6 +25,8 @@ class GuildAudioPlayer
       @voiceConnection.getEncoder().setVolume @volume
       @currentStream.on 'end', =>
         @clean()
+      @currentStream.stdin.on 'error', =>
+        midiBuffer.destroy()
       resolve @currentStream
     .catch (error)=>
       reject error
