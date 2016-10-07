@@ -25,7 +25,7 @@ class BotPermissionManager
     return true if user.id in @admins or user.id in @owner or user.id is server.owner.id
     if not globalOnly
       for n in @adminRoles
-        for role in server.roles.getAll('name')
+        for role in server.roles.getAll('name', n)
           return true if user in server.usersWithRole(role)
     false
     
