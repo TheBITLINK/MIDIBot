@@ -23,10 +23,11 @@ class BotPermissionManager
 
   isAdmin: (user, server, globalOnly)=>
     return true if user.id in @admins or user.id in @owner or user.id is server.owner.id
-    if not globalOnly and user.id in @serverData.servers[server.id].admins
-      true
-    else
-      false
+    if not globalOnly
+      for n in @adminRoles
+        for role in server.roles.getAll('name')
+          return true if user in server.usersWithRole(role)
+    false
     
   isOwner: (user)=> user.id in @owner
 
